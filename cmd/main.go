@@ -17,7 +17,7 @@ import (
 // @title University API
 // @version 1.0
 // @description University Management System API
-// @host localhost:8080
+// @host deploy-university-api.onrender.com
 // @BasePath /
 // @securityDefinitions.apiKey Bearer
 // @in header
