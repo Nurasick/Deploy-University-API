@@ -8,7 +8,8 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-var jwtKey = []byte(config.Load().JWTSecret)
+var jwtKey = []byte(config.GetConfig().SecretKey)
+var ttl = config.GetConfig().JWTTTL
 
 type Claims struct {
 	UserID int    `json:"user_id"`
@@ -23,7 +24,7 @@ func GenerateToken(userID, roleID int, email string) (string, error) {
 		Email:  email,
 		RoleID: roleID,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(24 * time.Hour).Unix(),
+			ExpiresAt: time.Now().Add(ttl).Unix(),
 			IssuedAt:  time.Now().Unix(),
 		},
 	}

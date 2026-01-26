@@ -1,10 +1,10 @@
 package main
 
 import (
-	"context"
+	"log"
 	"university/config"
+	"university/database"
 	_ "university/docs" // Import docs for swagger
-	"university/helpers/db"
 	"university/pkg/handler"
 	"university/pkg/middleware"
 	"university/pkg/repository"
@@ -25,18 +25,23 @@ import (
 // @description Type "Bearer" followed by a space and JWT token.
 func main() {
 
-	cfg := config.Load()
+	cfg := config.GetConfig()
+	log.Printf("Config DB: host=%s port=%d user=%s dbname=%s url=%s",
+		cfg.DB.Host, cfg.DB.Port, cfg.DB.User, cfg.DB.DBName, cfg.DB.URL)
+	log.Printf("Connecting to DB: %s", cfg.DB.String())
+	conn := database.OpenConnection(cfg.DB.String())
+	defer database.CloseConnection(conn)
 
-	db.Connect(cfg.DBUrl)
-	defer db.Conn.Close(context.Background())
-
+	sqlDB := database.PGXConnToSQLDB(conn)
+	database.GooseMigrate(sqlDB, "./database/migrations")
+	log.Println("Database migrated")
 	// Initialize repositories
-	userRepo := repository.NewUserRepository(db.Conn)
-	studentRepo := repository.NewStudentRepository(db.Conn)
-	scheduleRepo := repository.NewScheduleRepository(db.Conn)
-	attendanceRepo := repository.NewAttendanceRepository(db.Conn)
-	teacherRepo := repository.NewTeacherRepository(db.Conn)
-	subjectRepo := repository.NewSubjectRepository(db.Conn)
+	userRepo := repository.NewUserRepository(conn)
+	studentRepo := repository.NewStudentRepository(conn)
+	attendanceRepo := repository.NewAttendanceRepository(conn)
+	scheduleRepo := repository.NewScheduleRepository(conn)
+	teacherRepo := repository.NewTeacherRepository(conn)
+	subjectRepo := repository.NewSubjectRepository(conn)
 
 	// Initialize services
 	authService := service.NewAuthService(userRepo)

@@ -1,11 +1,41 @@
+
 services:
+  db:
+    image: postgres:15-alpine
+    container_name: university_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: university
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   api:
     build: 
       context: .
       dockerfile: Dockerfile
-    container_name: university_api
+    container_name: university_apiv2
     environment:
-      DATABASE_URL: postgresql://students:Vhtyhcn5hTCIhNWvTgnum29Sov0rY2oU@dpg-d5rgmufgi27c738sgcr0-a/university_hot0
-      JWT_SECRET: supersecretkey
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: university
+      DATABASE_URL: postgres://postgres:1234@db:5432/university  # Optional, can override for Render
+      JWT_SECRET: secret
+      PORT: 8080
     ports:
       - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

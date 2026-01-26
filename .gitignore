@@ -6,3 +6,7 @@ obj/
 vendor/
 *.log
 *.exe
+
+.env
+.env.example
+docker-compose.yml
