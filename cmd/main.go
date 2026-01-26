@@ -35,6 +35,8 @@ func main() {
 	sqlDB := database.PGXConnToSQLDB(conn)
 	database.GooseMigrate(sqlDB, "./database/migrations")
 	log.Println("Database migrated")
+
+	dbWrapper := database.NewDBConnWrapper(sqlDB)
 	// Initialize repositories
 	userRepo := repository.NewUserRepository(conn)
 	studentRepo := repository.NewStudentRepository(conn)
@@ -61,6 +63,9 @@ func main() {
 	//adminHandler := handler.NewAdminHandler(userService, studentService, teacherService, scheduleService)
 
 	e := echo.New()
+
+	healthHandler := handler.NewHealthHandler(dbWrapper, cfg)
+	e.GET("/internal/health", healthHandler.Status)
 
 	e.GET("/swagger/*", echoSwagger.EchoWrapHandler())
 	jmtMW := middleware.JWTAuth

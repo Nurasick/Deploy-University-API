@@ -28,3 +28,15 @@ func PGXConnToSQLDB(conn *pgx.Conn) *sql.DB {
 
 	return sqlDB
 }
+
+type DBConnWrapper struct {
+	SQLDB *sql.DB
+}
+
+func NewDBConnWrapper(sqlDB *sql.DB) *DBConnWrapper {
+	return &DBConnWrapper{SQLDB: sqlDB}
+}
+
+func (db *DBConnWrapper) Ping(ctx context.Context) error {
+	return db.SQLDB.PingContext(ctx)
+}
