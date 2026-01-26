@@ -89,6 +89,7 @@ func GetConfig() *AppConfig {
 		SecretKey: os.Getenv("JWT_SECRET"),
 		DB:        dbCfg,
 	}
+	log.Printf("JWT_SECRET value: %q", os.Getenv("JWT_SECRET"))
 
 	// Validate required fields
 	validate := validator.New()
