@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:8080",
+    "host": "deploy-university-api.onrender.com",
     "basePath": "/",
     "paths": {
         "/attendance/attendanceByStudentID/{id}": {

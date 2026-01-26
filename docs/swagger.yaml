@@ -164,7 +164,7 @@ definitions:
       user_id:
         type: integer
     type: object
-host: localhost:8080
+host: deploy-university-api.onrender.com
 info:
   contact: {}
   description: University Management System API
