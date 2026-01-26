@@ -1,0 +1,691 @@
+basePath: /
+definitions:
+  model.AttendanceRequest:
+    properties:
+      student_id:
+        type: integer
+      subject_id:
+        type: integer
+      visit_day:
+        type: string
+      visited:
+        type: boolean
+    type: object
+  model.AttendanceResponse:
+    properties:
+      id:
+        type: integer
+      student_name:
+        type: string
+      subject_name:
+        type: string
+      visit_day:
+        type: string
+      visited:
+        type: boolean
+    type: object
+  model.AuthResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  model.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  model.MeResponse:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      role:
+        type: integer
+    type: object
+  model.RegisterRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      role_id:
+        type: integer
+    type: object
+  model.RegisterResponse:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+    type: object
+  model.Schedule:
+    properties:
+      day_of_week:
+        type: integer
+      ends_at:
+        type: string
+      group_id:
+        type: integer
+      id:
+        type: integer
+      starts_at:
+        type: string
+      subject_id:
+        type: integer
+      teacher_id:
+        type: integer
+    type: object
+  model.ScheduleRequest:
+    properties:
+      day_of_week:
+        type: integer
+      ends_at:
+        type: string
+      group_id:
+        type: integer
+      starts_at:
+        type: string
+      subject_id:
+        type: integer
+      teacher_id:
+        type: integer
+    type: object
+  model.Student:
+    properties:
+      birth_date:
+        type: string
+      gender:
+        type: string
+      group_id:
+        type: integer
+      group_name:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      user_id:
+        type: integer
+      year:
+        type: integer
+    type: object
+  model.StudentRequest:
+    properties:
+      birth_date:
+        type: string
+      gender:
+        type: string
+      group_id:
+        type: integer
+      name:
+        type: string
+      user_id:
+        type: integer
+      year:
+        type: integer
+    type: object
+  model.StudentResponse:
+    properties:
+      birth_date:
+        type: string
+      gender:
+        type: string
+      group_id:
+        type: integer
+      group_name:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  model.Teacher:
+    properties:
+      department:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  model.TeacherRequest:
+    properties:
+      department:
+        type: string
+      name:
+        type: string
+      user_id:
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: University Management System API
+  title: University API
+  version: "1.0"
+paths:
+  /attendance/attendanceByStudentID/{id}:
+    get:
+      description: Retrieve all attendance records for a specific student
+      parameters:
+      - description: Student ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.AttendanceResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - Bearer: []
+      summary: Get attendance by student
+      tags:
+      - Attendance
+  /attendance/attendanceBySubjectID/{id}:
+    get:
+      description: Retrieve all attendance records for a specific subject
+      parameters:
+      - description: Subject ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.AttendanceResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - Bearer: []
+      summary: Get attendance by subject
+      tags:
+      - Attendance
+  /attendance/subject:
+    post:
+      consumes:
+      - application/json
+      description: Mark attendance for a student in a subject
+      parameters:
+      - description: Attendance Record
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.AttendanceRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - Bearer: []
+      summary: Mark attendance
+      tags:
+      - Attendance
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login with email and password to get JWT token
+      parameters:
+      - description: Login Request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.AuthResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Login user
+      tags:
+      - Auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account with email and password
+      parameters:
+      - description: Register Request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.RegisterResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Register a new user
+      tags:
+      - Auth
+  /schedule:
+    post:
+      consumes:
+      - application/json
+      description: Add schedule for a group with teacher and subject
+      parameters:
+      - description: Schedule Info
+        in: body
+        name: schedule
+        required: true
+        schema:
+          $ref: '#/definitions/model.ScheduleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Schedule'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - Bearer: []
+      summary: Create a new class schedule
+      tags:
+      - Schedules
+  /schedule/all_class_schedule:
+    get:
+      description: Retrieve all schedules
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Schedule'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - Bearer: []
+      summary: Get all schedule
+      tags:
+      - Schedules
+  /schedule/group/{id}:
+    get:
+      description: Retrieve schedule for a specific group
+      parameters:
+      - description: Group ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Schedule'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - Bearer: []
+      summary: Get group schedule
+      tags:
+      - Schedules
+  /student:
+    post:
+      consumes:
+      - application/json
+      description: Create a new student with user and group mapping
+      parameters:
+      - description: Student Info
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.StudentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Student'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - Bearer: []
+      summary: Create a new student
+      tags:
+      - Student
+  /student/{id}:
+    get:
+      description: Retrieve student information by user ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.StudentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - Bearer: []
+      summary: Get student by ID
+      tags:
+      - Student
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing user
+      parameters:
+      - description: Student Info
+        in: body
+        name: student
+        required: true
+        schema:
+          $ref: '#/definitions/model.StudentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Student'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - Bearer: []
+      summary: Update an existing student student
+      tags:
+      - Student
+  /student/{id}/attendance:
+    get:
+      description: Get attendance records for the current student
+      parameters:
+      - description: Student ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.AttendanceResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - Bearer: []
+      summary: Get student attendance
+      tags:
+      - Student
+  /teacher:
+    post:
+      consumes:
+      - application/json
+      description: Add a teacher and link to a user
+      parameters:
+      - description: Teacher Info
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.TeacherRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Teacher'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - Bearer: []
+      summary: Create a new teacher
+      tags:
+      - Teacher
+  /teacher/{id}:
+    get:
+      description: Get teacher by its id
+      parameters:
+      - description: Teacher ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Teacher'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - Bearer: []
+      summary: Get teacher by id
+      tags:
+      - Teacher
+  /users/me:
+    get:
+      description: Get the authenticated user's profile information
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.MeResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - Bearer: []
+      summary: Get current user information
+      tags:
+      - Users
+securityDefinitions:
+  Bearer:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

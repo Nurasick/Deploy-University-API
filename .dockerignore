@@ -1,0 +1,23 @@
+# Git
+.git
+.gitignore
+
+# Local env files
+.env
+.env.local
+
+# Editor / OS
+.vscode
+.idea
+.DS_Store
+
+# Build output
+bin/
+tmp/
+
+# Go test/cache
+**/*.test
+coverage.out
+
+# Docs
+DOCKER_DEPLOYMENT.md
