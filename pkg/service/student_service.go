@@ -11,6 +11,7 @@ type StudentServiceInterface interface {
 	GetStudentByID(id int) (*model.Student, error)
 	GetStudentByUserID(id int) (*model.Student, error)
 	GetStudentAttendance(studentID int) ([]model.AttendanceResponse, error)
+	GetAllStudents() ([]model.Student, error)
 	UpdateStudent(student *model.Student) error
 }
 
@@ -97,4 +98,11 @@ func (r *StudentService) UpdateStudent(student *model.Student) error {
 		return errors.New("Failed to update student: " + err.Error())
 	}
 	return nil
+}
+func (r *StudentService) GetAllStudents() ([]model.Student, error) {
+	students, err := r.studentRepo.GetAllStudents()
+	if err != nil {
+		return nil, errors.New("Failed to get all students: " + err.Error())
+	}
+	return students, nil
 }

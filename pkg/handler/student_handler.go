@@ -135,3 +135,21 @@ func (h *StudentHandler) UpdateStudent(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, stud)
 }
+
+// @Summary Get all students
+// @Description Retrieve students
+// @Tags Student
+// @Produce json
+// @Security Bearer
+// @Success 200 {object} []model.StudentResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /student/all [get]
+func (h *StudentHandler) GetAllStudents(c echo.Context) error {
+	data, err := h.StudentService.GetAllStudents()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, data)
+}

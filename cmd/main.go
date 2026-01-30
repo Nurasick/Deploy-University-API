@@ -17,7 +17,7 @@ import (
 // @title University API
 // @version 1.0
 // @description University Management System API
-// @host deploy-university-api.onrender.com
+// @host localhost:8080
 // @BasePath /
 // @securityDefinitions.apiKey Bearer
 // @in header
@@ -82,6 +82,7 @@ func main() {
 	studentRoutes := e.Group("/student", jmtMW)
 	studentRoutes.GET("/:id", studentHandler.GetStudentByID)
 	studentRoutes.GET("/:id/attendance", studentHandler.MyAttendance)
+	studentRoutes.GET("/all", studentHandler.GetAllStudents)
 	studentRoutes.POST("", studentHandler.CreateStudent)
 	studentRoutes.PATCH("/:id", studentHandler.UpdateStudent)
 
