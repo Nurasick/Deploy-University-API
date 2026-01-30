@@ -63,6 +63,15 @@ INSERT INTO public.teachers (id, full_name, department, user_id) VALUES
 (2, 'Denis Ktototam', 'Engineering', 8)
 ON CONFLICT (user_id) DO NOTHING;
 
+SELECT setval('users_id_seq', (SELECT COALESCE(MAX(id), 0) FROM users));
+SELECT setval('students_id_seq', (SELECT COALESCE(MAX(id), 0) FROM students));
+SELECT setval('teachers_id_seq', (SELECT COALESCE(MAX(id), 0) FROM teachers));
+SELECT setval('roles_id_seq', (SELECT COALESCE(MAX(id), 0) FROM roles));
+SELECT setval('status_id_seq', (SELECT COALESCE(MAX(id), 0) FROM status));
+SELECT setval('genders_id_seq', (SELECT COALESCE(MAX(id), 0) FROM genders));
+SELECT setval('subjects_id_seq', (SELECT COALESCE(MAX(id), 0) FROM subjects));
+SELECT setval('groups_id_seq', (SELECT COALESCE(MAX(id), 0) FROM "groups"));
+
 -- +goose Down 
 
 -- Delete seed data in reverse order

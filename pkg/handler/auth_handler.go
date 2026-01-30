@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strings"
 	"university/model"
 	"university/pkg/service"
 
@@ -37,6 +38,9 @@ func (h *AuthHandler) Register(c echo.Context) error {
 	}
 	user, err := h.AuthService.Register(req.Email, req.Password, req.RoleID) //RoleID is 1 for now as i do not know how to make them separate and when to pass //calling the Register method of AuthService
 	if err != nil {
+		if strings.Contains(err.Error(), "Already existing user") {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+		}
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	registerResponse := model.RegisterResponse{

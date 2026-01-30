@@ -29,6 +29,9 @@ INSERT INTO public.class_schedule (id, group_id, day_of_week, starts_at, ends_at
 (11, 4, 1, '09:00:00', '10:30:00', 3, 1)
 ON CONFLICT DO NOTHING;
 
+
+SELECT setval('attendance_id_seq', (SELECT COALESCE(MAX(id), 0) FROM attendance));
+SELECT setval('class_schedule_id_seq', (SELECT COALESCE(MAX(id), 0) FROM class_schedule));
 -- +goose Down 
 
 -- Delete attendance and schedule data
