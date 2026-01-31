@@ -38,6 +38,6 @@ This backend powers a full-stack university management system used for:
 - Providing API endpoints for a React frontend application
 
 ## Links
-- Render: [University API on render.com]https://deploy-university-api.onrender.com/swagger//index.html#/
+- Render: [University API on render.com](https://deploy-university-api.onrender.com/swagger//index.html#/)
 - Frontend: [University Management Frontend](https://github.com/Nurasick/University-Frontend)  
 - Backend: This repository
