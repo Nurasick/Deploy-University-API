@@ -19,7 +19,6 @@ import (
 // @title University API
 // @version 1.0
 // @description University Management System API
-// @host {{HOST}}
 // @BasePath /
 // @securityDefinitions.apiKey Bearer
 // @in header
