@@ -2,8 +2,10 @@ package main
 
 import (
 	"log"
+	"os"
 	"university/config"
 	"university/database"
+	"university/docs"
 	_ "university/docs" // Import docs for swagger
 	"university/pkg/handler"
 	"university/pkg/middleware"
@@ -17,13 +19,20 @@ import (
 // @title University API
 // @version 1.0
 // @description University Management System API
-// @host localhost:8080
+// @host {{HOST}}
 // @BasePath /
 // @securityDefinitions.apiKey Bearer
 // @in header
 // @name Authorization
 // @description Type "Bearer" followed by a space and JWT token.
 func main() {
+
+	host := os.Getenv("SWAGGER_HOST")
+	if host == "" {
+		host = "localhost:8080"
+	}
+
+	docs.SwaggerInfo.Host = host
 
 	cfg := config.GetConfig()
 	log.Printf("Config DB: host=%s port=%d user=%s dbname=%s url=%s",

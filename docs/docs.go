@@ -1148,6 +1148,9 @@ const docTemplate = `{
                 "gender": {
                     "type": "string"
                 },
+                "gender_id": {
+                    "type": "integer"
+                },
                 "group_id": {
                     "type": "integer"
                 },
@@ -1177,8 +1180,8 @@ const docTemplate = `{
                 "firstname": {
                     "type": "string"
                 },
-                "gender": {
-                    "type": "string"
+                "gender_id": {
+                    "type": "integer"
                 },
                 "group_id": {
                     "type": "integer"
@@ -1268,7 +1271,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	Host:             "{{HOST}}",
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "University API",

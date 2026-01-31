@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:8080",
+    "host": "{{HOST}}",
     "basePath": "/",
     "paths": {
         "/attendance/attendanceByStudentID/{id}": {
@@ -1142,6 +1142,9 @@
                 "gender": {
                     "type": "string"
                 },
+                "gender_id": {
+                    "type": "integer"
+                },
                 "group_id": {
                     "type": "integer"
                 },
@@ -1171,8 +1174,8 @@
                 "firstname": {
                     "type": "string"
                 },
-                "gender": {
-                    "type": "string"
+                "gender_id": {
+                    "type": "integer"
                 },
                 "group_id": {
                     "type": "integer"
