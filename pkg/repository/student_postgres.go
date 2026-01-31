@@ -25,11 +25,11 @@ func NewStudentRepository(conn *pgx.Conn) *StudentRepository {
 }
 
 func (r *StudentRepository) CreateStudent(student *model.Student) (int, error) {
-	query := `insert into students (name,birth_date,group_id,gender_id,user_id,year_of_study) 
-	values ($1,$2,$3,$4,$5,$6) returning id;`
+	query := `insert into students (firstname,surname,birth_date,group_id,gender_id,user_id,year_of_study) 
+	values ($1,$2,$3,$4,$5,$6,$7) returning id;`
 
 	var id int
-	err := r.conn.QueryRow(context.Background(), query, student.Name, student.BirthDate, student.GroupID, student.Gender, student.UserId, student.Year).Scan(&id)
+	err := r.conn.QueryRow(context.Background(), query, student.Firstname, student.Surname, student.BirthDate, student.GroupID, student.Gender, student.UserId, student.Year).Scan(&id)
 	if err != nil {
 		return 0, errors.New("Failed to create student: " + err.Error())
 	}
@@ -40,7 +40,7 @@ func (r *StudentRepository) CreateStudent(student *model.Student) (int, error) {
 
 func (r *StudentRepository) GetStudentByID(id int) (*model.Student, error) {
 	query := `
-	SELECT s.id, s.name, s.birth_date, s.group_id, gr.name, g.name, s.user_id, s.year_of_study
+	SELECT s.id, s.firstname,s.surname, s.birth_date, s.group_id, gr.name, g.name, s.user_id, s.year_of_study
 	FROM students s
 	JOIN genders g ON g.id = s.gender_id
 	join groups gr ON gr.id = s.group_id
@@ -48,7 +48,7 @@ func (r *StudentRepository) GetStudentByID(id int) (*model.Student, error) {
 
 	var student model.Student
 
-	err := r.conn.QueryRow(context.Background(), query, id).Scan(&student.ID, &student.Name, &student.BirthDate, &student.GroupID, &student.GroupName, &student.Gender, &student.UserId, &student.Year)
+	err := r.conn.QueryRow(context.Background(), query, id).Scan(&student.ID, &student.Firstname, &student.Surname, &student.BirthDate, &student.GroupID, &student.GroupName, &student.Gender, &student.UserId, &student.Year)
 	if err != nil {
 		return nil, errors.New("Failed to retrieve student: " + err.Error())
 	}
@@ -57,7 +57,7 @@ func (r *StudentRepository) GetStudentByID(id int) (*model.Student, error) {
 
 func (r *StudentRepository) GetStudentByUserID(userID int) (*model.Student, error) {
 	query := `
-	SELECT s.id, s.name, s.birth_date, s.group_id, gr.name, g.name, s.user_id, s.year_of_study
+	SELECT s.id, s.firstname,s.surname, s.birth_date, s.group_id, gr.name, g.name, s.user_id, s.year_of_study
 	FROM students s
 	JOIN genders g ON g.id = s.gender_id
 	join groups gr ON gr.id = s.group_id
@@ -65,7 +65,7 @@ func (r *StudentRepository) GetStudentByUserID(userID int) (*model.Student, erro
 
 	var student model.Student
 
-	err := r.conn.QueryRow(context.Background(), query, userID).Scan(&student.ID, &student.Name, &student.BirthDate, &student.GroupID, &student.GroupName, &student.Gender, &student.UserId, &student.Year)
+	err := r.conn.QueryRow(context.Background(), query, userID).Scan(&student.ID, &student.Firstname, &student.Surname, &student.BirthDate, &student.GroupID, &student.GroupName, &student.Gender, &student.UserId, &student.Year)
 	if err != nil {
 		return nil, errors.New("Failed to retrieve student: " + err.Error())
 	}
@@ -73,7 +73,7 @@ func (r *StudentRepository) GetStudentByUserID(userID int) (*model.Student, erro
 }
 func (r *StudentRepository) GetAllStudents() ([]model.Student, error) {
 	query := `
-	SELECT s.id, s.name, s.birth_date, s.group_id,gr.name, g.name, s.user_id, s.year_of_study
+	SELECT s.id, s.firstname,s.surname, s.birth_date, s.group_id,gr.name, g.name, s.user_id, s.year_of_study
 	FROM students s
 	JOIN genders g ON g.id = s.gender_id
 	join groups gr ON gr.id = s.group_id;`
@@ -86,7 +86,7 @@ func (r *StudentRepository) GetAllStudents() ([]model.Student, error) {
 	var students []model.Student
 	for rows.Next() {
 		var student model.Student
-		err := rows.Scan(&student.ID, &student.Name, &student.BirthDate, &student.GroupID, &student.GroupName, &student.Gender, &student.UserId, &student.Year)
+		err := rows.Scan(&student.ID, &student.Firstname, &student.Surname, &student.BirthDate, &student.GroupID, &student.GroupName, &student.Gender, &student.UserId, &student.Year)
 		if err != nil {
 			return nil, errors.New("Failed to scan student: " + err.Error())
 		}
@@ -96,9 +96,9 @@ func (r *StudentRepository) GetAllStudents() ([]model.Student, error) {
 }
 
 func (r *StudentRepository) UpdateStudent(student *model.Student) error {
-	query := `UPDATE students SET name=$1, birth_date=$2, group_id=$3, gender_id=$4, year=$5 where id = $6;`
+	query := `UPDATE students SET firstname=$1,surname=$2, birth_date=$3, group_id=$4, gender_id=$5, year=$6 where id = $6;`
 
-	_, err := r.conn.Exec(context.Background(), query, student.Name, student.BirthDate, student.GroupID, student.Gender, student.Year, student.ID)
+	_, err := r.conn.Exec(context.Background(), query, student.Firstname, student.Surname, student.BirthDate, student.GroupID, student.Gender, student.Year, student.ID)
 	if err != nil {
 		return errors.New("Failed to update student: " + err.Error())
 	}

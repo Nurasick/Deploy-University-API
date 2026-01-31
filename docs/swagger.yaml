@@ -29,6 +29,18 @@ definitions:
       token:
         type: string
     type: object
+  model.Group:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  model.GroupRequest:
+    properties:
+      name:
+        type: string
+    type: object
   model.LoginRequest:
     properties:
       email:
@@ -99,6 +111,8 @@ definitions:
     properties:
       birth_date:
         type: string
+      firstname:
+        type: string
       gender:
         type: string
       group_id:
@@ -107,7 +121,7 @@ definitions:
         type: string
       id:
         type: integer
-      name:
+      surname:
         type: string
       user_id:
         type: integer
@@ -118,11 +132,13 @@ definitions:
     properties:
       birth_date:
         type: string
+      firstname:
+        type: string
       gender:
         type: string
       group_id:
         type: integer
-      name:
+      surname:
         type: string
       user_id:
         type: integer
@@ -133,6 +149,8 @@ definitions:
     properties:
       birth_date:
         type: string
+      firstname:
+        type: string
       gender:
         type: string
       group_id:
@@ -141,8 +159,10 @@ definitions:
         type: string
       id:
         type: integer
-      name:
+      surname:
         type: string
+      year:
+        type: integer
     type: object
   model.Teacher:
     properties:
@@ -347,6 +367,72 @@ paths:
       summary: Register a new user
       tags:
       - Auth
+  /groups:
+    get:
+      description: Retrieve groups
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Group'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - Bearer: []
+      summary: Get all groups
+      tags:
+      - Group
+    post:
+      consumes:
+      - application/json
+      description: Create a new group
+      parameters:
+      - description: Group Info
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.GroupRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - Bearer: []
+      summary: Create a new group
+      tags:
+      - Group
   /schedule:
     post:
       consumes:

@@ -28,3 +28,6 @@ type Group struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
+type GroupRequest struct {
+	Name string `json:"name"`
+}

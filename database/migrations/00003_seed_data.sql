@@ -49,12 +49,12 @@ INSERT INTO public.users (id, email, password_hash, created_at, role_id, updated
 ON CONFLICT (email) DO NOTHING;
 
 -- STUDENTS
-INSERT INTO public.students (id, name, birth_date, year_of_study, gender_id, group_id, user_id) VALUES
-(1, 'Ruslan', '2004-10-02', 2, 1, 2, 1),
-(2, 'Dana', '2005-01-25', 1, 2, 3, 2),
-(3, 'Arman', '2003-09-14', 3, 1, 2, 3),
-(4, 'Alina', '2004-12-01', 2, 2, 4, 4),
-(5, 'Aigerim', '2005-03-12', 1, 2, 1, 7)
+INSERT INTO public.students (id, firstname,surname, birth_date, year_of_study, gender_id, group_id, user_id) VALUES
+(1, 'Ruslan','Utepbergen', '2004-10-02', 2, 1, 2, 1),
+(2, 'Dana','Kim', '2005-01-25', 1, 2, 3, 2),
+(3, 'Arman','Armanbek', '2003-09-14', 3, 1, 2, 3),
+(4, 'Alina','Alinova', '2004-12-01', 2, 2, 4, 4),
+(5, 'Aigerim','Shakanova', '2005-03-12', 1, 2, 1, 7)
 ON CONFLICT DO NOTHING;
 
 -- TEACHERS

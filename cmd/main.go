@@ -44,8 +44,10 @@ func main() {
 	scheduleRepo := repository.NewScheduleRepository(conn)
 	teacherRepo := repository.NewTeacherRepository(conn)
 	subjectRepo := repository.NewSubjectRepository(conn)
+	groupRepo := repository.NewGroupRepository(conn)
 
 	// Initialize services
+	groupService := service.NewGroupService(groupRepo)
 	authService := service.NewAuthService(userRepo)
 	userService := service.NewUserService(userRepo)
 	studentService := service.NewStudentService(studentRepo, userRepo, attendanceRepo)
@@ -54,6 +56,7 @@ func main() {
 	attendanceService := service.NewAttendanceService(attendanceRepo, studentRepo, subjectRepo)
 
 	// Initialize handlers
+	GroupHandler := handler.NewGroupHandler(groupService)
 	authHandler := handler.NewAuthHandler(authService)
 	userHandler := handler.NewUserHandler(userService)
 	studentHandler := handler.NewStudentHandler(studentService)
@@ -102,6 +105,10 @@ func main() {
 	attendanceRoutes.GET("/attendanceBySubjectID/:id", attendanceHandler.GetAttendanceBySubjectID)
 	attendanceRoutes.GET("/attendanceByStudentID/:id", attendanceHandler.GetAttendanceByStudentID)
 
+	// Group routes
+	groupRoutes := e.Group("/groups", jmtMW)
+	groupRoutes.GET("", GroupHandler.GetAllStudents)
+	groupRoutes.POST("", GroupHandler.CreateGroup)
 	// Admin routes
 
 	/*

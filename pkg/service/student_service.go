@@ -43,7 +43,8 @@ func (r *StudentService) CreateStudent(student *model.StudentRequest) (*model.St
 		return nil, errors.New("User is not a student: ")
 	}
 	stud := &model.Student{
-		Name:      student.Name,
+		Firstname: student.Firstname,
+		Surname:   student.Surname,
 		GroupID:   student.GroupID,
 		Gender:    student.Gender,
 		BirthDate: student.BirthDate,
