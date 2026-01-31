@@ -6,7 +6,6 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "{{HOST}}",
     "basePath": "/",
     "paths": {
         "/attendance/attendanceByStudentID/{id}": {

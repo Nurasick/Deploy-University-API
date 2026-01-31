@@ -186,7 +186,6 @@ definitions:
       user_id:
         type: integer
     type: object
-host: '{{HOST}}'
 info:
   contact: {}
   description: University Management System API
