@@ -7,6 +7,7 @@ import (
 	"university/model"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type AttendanceRepositoryInterface interface {
@@ -18,10 +19,10 @@ type AttendanceRepositoryInterface interface {
 }
 
 type AttendanceRepository struct {
-	conn *pgx.Conn
+	conn *pgxpool.Pool
 }
 
-func NewAttendanceRepository(conn *pgx.Conn) *AttendanceRepository {
+func NewAttendanceRepository(conn *pgxpool.Pool) *AttendanceRepository {
 	return &AttendanceRepository{conn: conn}
 }
 

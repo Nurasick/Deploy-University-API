@@ -5,7 +5,7 @@ import (
 	"errors"
 	"university/model"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type SubjectRepositoryInterface interface {
@@ -14,10 +14,10 @@ type SubjectRepositoryInterface interface {
 	GetAllSubjects() ([]model.Subject, error)
 }
 type SubjectRepository struct {
-	conn *pgx.Conn
+	conn *pgxpool.Pool
 }
 
-func NewSubjectRepository(conn *pgx.Conn) *SubjectRepository {
+func NewSubjectRepository(conn *pgxpool.Pool) *SubjectRepository {
 	return &SubjectRepository{conn: conn}
 }
 

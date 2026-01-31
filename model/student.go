@@ -11,6 +11,7 @@ type Student struct {
 	BirthDate time.Time `json:"birth_date"`
 	Year      int       `json:"year"`
 	Gender    string    `json:"gender"`
+	GenderID  int       `json:"gender_id"`
 	UserId    int       `json:"user_id"`
 }
 
@@ -31,6 +32,6 @@ type StudentRequest struct {
 	GroupID   int       `json:"group_id"`
 	BirthDate time.Time `json:"birth_date"`
 	Year      int       `json:"year"`
-	Gender    string    `json:"gender"`
+	GenderID  int       `json:"gender_id"`
 	UserId    int       `json:"user_id"`
 }

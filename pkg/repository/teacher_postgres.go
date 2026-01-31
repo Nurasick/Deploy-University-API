@@ -5,7 +5,7 @@ import (
 	"errors"
 	"university/model"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type TeacherRepositoryInterface interface {
@@ -16,10 +16,10 @@ type TeacherRepositoryInterface interface {
 }
 
 type TeacherRepository struct {
-	conn *pgx.Conn
+	conn *pgxpool.Pool
 }
 
-func NewTeacherRepository(conn *pgx.Conn) *TeacherRepository {
+func NewTeacherRepository(conn *pgxpool.Pool) *TeacherRepository {
 	return &TeacherRepository{conn: conn}
 }
 

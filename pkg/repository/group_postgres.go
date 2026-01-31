@@ -5,7 +5,7 @@ import (
 	"errors"
 	"university/model"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type GroupRepositoryInterface interface {
@@ -14,10 +14,10 @@ type GroupRepositoryInterface interface {
 }
 
 type GroupRepository struct {
-	conn *pgx.Conn
+	conn *pgxpool.Pool
 }
 
-func NewGroupRepository(conn *pgx.Conn) *GroupRepository {
+func NewGroupRepository(conn *pgxpool.Pool) *GroupRepository {
 	return &GroupRepository{conn: conn}
 }
 

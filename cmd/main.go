@@ -29,10 +29,13 @@ func main() {
 	log.Printf("Config DB: host=%s port=%d user=%s dbname=%s url=%s",
 		cfg.DB.Host, cfg.DB.Port, cfg.DB.User, cfg.DB.DBName, cfg.DB.URL)
 	log.Printf("Connecting to DB: %s", cfg.DB.String())
-	conn := database.OpenConnection(cfg.DB.String())
-	defer database.CloseConnection(conn)
+	conn := database.OpenConnectionPool(cfg.DB.String())
+	defer database.CloseConnectionPool(conn)
 
-	sqlDB := database.PGXConnToSQLDB(conn)
+	migration := database.OpenConnection(cfg.DB.String())
+	defer database.CloseConnection(migration)
+
+	sqlDB := database.PGXConnToSQLDB(migration)
 	database.GooseMigrate(sqlDB, "./database/migrations")
 	log.Println("Database migrated")
 
@@ -50,7 +53,7 @@ func main() {
 	groupService := service.NewGroupService(groupRepo)
 	authService := service.NewAuthService(userRepo)
 	userService := service.NewUserService(userRepo)
-	studentService := service.NewStudentService(studentRepo, userRepo, attendanceRepo)
+	studentService := service.NewStudentService(studentRepo, userRepo, attendanceRepo, userRepo)
 	teacherService := service.NewTeacherService(*teacherRepo, *userRepo, *scheduleRepo)
 	scheduleService := service.NewScheduleService(scheduleRepo)
 	attendanceService := service.NewAttendanceService(attendanceRepo, studentRepo, subjectRepo)

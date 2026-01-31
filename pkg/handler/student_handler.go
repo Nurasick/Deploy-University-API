@@ -129,7 +129,7 @@ func (h *StudentHandler) UpdateStudent(c echo.Context) error {
 		BirthDate: req.BirthDate,
 		UserId:    req.UserId,
 		Year:      req.Year,
-		Gender:    req.Gender,
+		GenderID:  req.GenderID,
 	}
 	err = h.StudentService.UpdateStudent(stud)
 	if err != nil {

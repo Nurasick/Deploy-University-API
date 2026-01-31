@@ -3,9 +3,10 @@ package repository
 import (
 	"context"
 	"errors"
+	"fmt"
 	"university/model"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type StudentRepositoryInterface interface {
@@ -17,10 +18,10 @@ type StudentRepositoryInterface interface {
 }
 
 type StudentRepository struct {
-	conn *pgx.Conn
+	conn *pgxpool.Pool
 }
 
-func NewStudentRepository(conn *pgx.Conn) *StudentRepository {
+func NewStudentRepository(conn *pgxpool.Pool) *StudentRepository {
 	return &StudentRepository{conn: conn}
 }
 
@@ -29,10 +30,13 @@ func (r *StudentRepository) CreateStudent(student *model.Student) (int, error) {
 	values ($1,$2,$3,$4,$5,$6,$7) returning id;`
 
 	var id int
-	err := r.conn.QueryRow(context.Background(), query, student.Firstname, student.Surname, student.BirthDate, student.GroupID, student.Gender, student.UserId, student.Year).Scan(&id)
+	err := r.conn.QueryRow(context.Background(), query, student.Firstname, student.Surname, student.BirthDate, student.GroupID, student.GenderID, student.UserId, student.Year).Scan(&id)
+
 	if err != nil {
+		fmt.Print(student)
 		return 0, errors.New("Failed to create student: " + err.Error())
 	}
+
 	student.ID = id
 	return id, nil
 
@@ -49,6 +53,7 @@ func (r *StudentRepository) GetStudentByID(id int) (*model.Student, error) {
 	var student model.Student
 
 	err := r.conn.QueryRow(context.Background(), query, id).Scan(&student.ID, &student.Firstname, &student.Surname, &student.BirthDate, &student.GroupID, &student.GroupName, &student.Gender, &student.UserId, &student.Year)
+
 	if err != nil {
 		return nil, errors.New("Failed to retrieve student: " + err.Error())
 	}
