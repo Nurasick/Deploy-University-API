@@ -2,8 +2,12 @@ package service
 
 import (
 	"errors"
+	"fmt"
+	"strings"
 	"university/model"
 	"university/pkg/repository"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type StudentServiceInterface interface {
@@ -11,6 +15,7 @@ type StudentServiceInterface interface {
 	GetStudentByID(id int) (*model.Student, error)
 	GetStudentByUserID(id int) (*model.Student, error)
 	GetStudentAttendance(studentID int) ([]model.AttendanceResponse, error)
+	GetAllStudents() ([]model.Student, error)
 	UpdateStudent(student *model.Student) error
 }
 
@@ -18,36 +23,51 @@ type StudentService struct {
 	studentRepo    repository.StudentRepositoryInterface
 	userRepo       repository.UserRepositoryInterface
 	attendanceRepo repository.AttendanceRepositoryInterface
+	authRepo       repository.UserRepositoryInterface
 }
 
 func NewStudentService(
 	studentRepo *repository.StudentRepository,
 	userRepo *repository.UserRepository,
 	attendanceRepo *repository.AttendanceRepository,
+	authRepo *repository.UserRepository,
 ) *StudentService {
 	return &StudentService{
 		studentRepo:    studentRepo,
 		userRepo:       userRepo,
 		attendanceRepo: attendanceRepo,
+		authRepo:       authRepo,
 	}
 }
 
 func (r *StudentService) CreateStudent(student *model.StudentRequest) (*model.Student, error) {
-	userID := student.UserId
-	user, err := r.userRepo.GetUserByID(userID)
-	if err != nil || user == nil {
-		return nil, errors.New("User does not exist: " + err.Error())
+	email := fmt.Sprintf("%s.%s@university.com",
+		strings.ToLower(student.Firstname),
+		strings.ToLower(student.Surname),
+	)
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte("123456"), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
 	}
-	if user.RoleID != 3 {
-		return nil, errors.New("User is not a student: ")
+	user := &model.User{
+		Email:        email,
+		PasswordHash: string(passwordHash),
+		RoleID:       3,
+		Status:       model.ActiveStatus,
 	}
+	id, err := r.authRepo.CreateUser(user)
+	if err != nil {
+		return nil, errors.New("Failed to create a user" + err.Error())
+	}
+
 	stud := &model.Student{
-		Name:      student.Name,
+		Firstname: student.Firstname,
+		Surname:   student.Surname,
 		GroupID:   student.GroupID,
-		Gender:    student.Gender,
+		GenderID:  student.GenderID,
 		BirthDate: student.BirthDate,
 		Year:      student.Year,
-		UserId:    student.UserId,
+		UserId:    id,
 	}
 	studentID, err := r.studentRepo.CreateStudent(stud)
 	if err != nil {
@@ -97,4 +117,11 @@ func (r *StudentService) UpdateStudent(student *model.Student) error {
 		return errors.New("Failed to update student: " + err.Error())
 	}
 	return nil
+}
+func (r *StudentService) GetAllStudents() ([]model.Student, error) {
+	students, err := r.studentRepo.GetAllStudents()
+	if err != nil {
+		return nil, errors.New("Failed to get all students: " + err.Error())
+	}
+	return students, nil
 }

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"university/model"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type ScheduleRepositoryInterface interface {
@@ -17,11 +17,11 @@ type ScheduleRepositoryInterface interface {
 }
 
 type ScheduleRepository struct {
-	conn *pgx.Conn
+	conn *pgxpool.Pool
 }
 
 // NewUserRepository creates a new instance of UserRepository
-func NewScheduleRepository(conn *pgx.Conn) *ScheduleRepository {
+func NewScheduleRepository(conn *pgxpool.Pool) *ScheduleRepository {
 	return &ScheduleRepository{conn: conn}
 }
 

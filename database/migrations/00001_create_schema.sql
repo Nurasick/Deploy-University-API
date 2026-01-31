@@ -89,7 +89,8 @@ CREATE TABLE public."groups" (
 
 CREATE TABLE public.students (
 	id serial4 NOT NULL,
-	"name" varchar(100) NOT NULL,
+	firstname varchar(100) NOT NULL,
+	surname varchar(100) NOT NULL,
 	birth_date date NOT NULL,
 	year_of_study int2 NOT NULL,
 	gender_id int4 NOT NULL,

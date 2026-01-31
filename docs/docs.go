@@ -289,6 +289,110 @@ const docTemplate = `{
                 }
             }
         },
+        "/groups": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Retrieve groups",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Group"
+                ],
+                "summary": "Get all groups",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Group"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Create a new group",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Group"
+                ],
+                "summary": "Create a new group",
+                "parameters": [
+                    {
+                        "description": "Group Info",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.GroupRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/schedule": {
             "post": {
                 "security": [
@@ -481,6 +585,52 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/model.Student"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/student/all": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Retrieve students",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Get all students",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.StudentResponse"
+                            }
                         }
                     },
                     "400": {
@@ -865,6 +1015,25 @@ const docTemplate = `{
                 }
             }
         },
+        "model.Group": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.GroupRequest": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "model.LoginRequest": {
             "type": "object",
             "properties": {
@@ -973,8 +1142,14 @@ const docTemplate = `{
                 "birth_date": {
                     "type": "string"
                 },
+                "firstname": {
+                    "type": "string"
+                },
                 "gender": {
                     "type": "string"
+                },
+                "gender_id": {
+                    "type": "integer"
                 },
                 "group_id": {
                     "type": "integer"
@@ -985,7 +1160,7 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "name": {
+                "surname": {
                     "type": "string"
                 },
                 "user_id": {
@@ -1002,13 +1177,16 @@ const docTemplate = `{
                 "birth_date": {
                     "type": "string"
                 },
-                "gender": {
+                "firstname": {
                     "type": "string"
+                },
+                "gender_id": {
+                    "type": "integer"
                 },
                 "group_id": {
                     "type": "integer"
                 },
-                "name": {
+                "surname": {
                     "type": "string"
                 },
                 "user_id": {
@@ -1025,6 +1203,9 @@ const docTemplate = `{
                 "birth_date": {
                     "type": "string"
                 },
+                "firstname": {
+                    "type": "string"
+                },
                 "gender": {
                     "type": "string"
                 },
@@ -1037,8 +1218,11 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "name": {
+                "surname": {
                     "type": "string"
+                },
+                "year": {
+                    "type": "integer"
                 }
             }
         },
@@ -1087,7 +1271,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "deploy-university-api.onrender.com",
+	Host:             "{{HOST}}",
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "University API",

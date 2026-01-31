@@ -66,7 +66,8 @@ func (h *StudentHandler) GetStudentByID(c echo.Context) error {
 	}
 	data := model.StudentResponse{
 		ID:        stud.ID,
-		Name:      stud.Name,
+		Firstname: stud.Firstname,
+		Surname:   stud.Surname,
 		BirthDate: stud.BirthDate.Format("2006-01-02"),
 		GroupID:   stud.GroupID,
 		GroupName: stud.GroupName,
@@ -122,16 +123,48 @@ func (h *StudentHandler) UpdateStudent(c echo.Context) error {
 	}
 	stud := &model.Student{
 		ID:        id,
-		Name:      req.Name,
+		Firstname: req.Firstname,
+		Surname:   req.Surname,
 		GroupID:   req.GroupID,
 		BirthDate: req.BirthDate,
 		UserId:    req.UserId,
 		Year:      req.Year,
-		Gender:    req.Gender,
+		GenderID:  req.GenderID,
 	}
 	err = h.StudentService.UpdateStudent(stud)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusOK, stud)
+}
+
+// @Summary Get all students
+// @Description Retrieve students
+// @Tags Student
+// @Produce json
+// @Security Bearer
+// @Success 200 {object} []model.StudentResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /student/all [get]
+func (h *StudentHandler) GetAllStudents(c echo.Context) error {
+	studs, err := h.StudentService.GetAllStudents()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+	var data []model.StudentResponse
+	for _, stud := range studs {
+		data = append(data, model.StudentResponse{
+			Firstname: stud.Firstname,
+			Surname:   stud.Surname,
+			BirthDate: stud.BirthDate.Format("2006-01-02"),
+			Gender:    stud.Gender,
+			Year:      stud.Year,
+			ID:        stud.ID,
+			GroupID:   stud.GroupID,
+			GroupName: stud.GroupName,
+		})
+	}
+
+	return c.JSON(http.StatusOK, data)
 }

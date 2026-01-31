@@ -6,7 +6,7 @@ import (
 	"time"
 	"university/model"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 /*
@@ -26,11 +26,11 @@ type UserRepositoryInterface interface {
 }
 
 type UserRepository struct {
-	conn *pgx.Conn
+	conn *pgxpool.Pool
 }
 
 // NewUserRepository creates a new instance of UserRepository
-func NewUserRepository(conn *pgx.Conn) *UserRepository {
+func NewUserRepository(conn *pgxpool.Pool) *UserRepository {
 	return &UserRepository{conn: conn}
 }
 

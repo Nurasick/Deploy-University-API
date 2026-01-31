@@ -2,8 +2,10 @@ package main
 
 import (
 	"log"
+	"os"
 	"university/config"
 	"university/database"
+	"university/docs"
 	_ "university/docs" // Import docs for swagger
 	"university/pkg/handler"
 	"university/pkg/middleware"
@@ -17,7 +19,7 @@ import (
 // @title University API
 // @version 1.0
 // @description University Management System API
-// @host deploy-university-api.onrender.com
+// @host {{HOST}}
 // @BasePath /
 // @securityDefinitions.apiKey Bearer
 // @in header
@@ -25,14 +27,24 @@ import (
 // @description Type "Bearer" followed by a space and JWT token.
 func main() {
 
+	host := os.Getenv("SWAGGER_HOST")
+	if host == "" {
+		host = "localhost:8080"
+	}
+
+	docs.SwaggerInfo.Host = host
+
 	cfg := config.GetConfig()
 	log.Printf("Config DB: host=%s port=%d user=%s dbname=%s url=%s",
 		cfg.DB.Host, cfg.DB.Port, cfg.DB.User, cfg.DB.DBName, cfg.DB.URL)
 	log.Printf("Connecting to DB: %s", cfg.DB.String())
-	conn := database.OpenConnection(cfg.DB.String())
-	defer database.CloseConnection(conn)
+	conn := database.OpenConnectionPool(cfg.DB.String())
+	defer database.CloseConnectionPool(conn)
 
-	sqlDB := database.PGXConnToSQLDB(conn)
+	migration := database.OpenConnection(cfg.DB.String())
+	defer database.CloseConnection(migration)
+
+	sqlDB := database.PGXConnToSQLDB(migration)
 	database.GooseMigrate(sqlDB, "./database/migrations")
 	log.Println("Database migrated")
 
@@ -44,16 +56,19 @@ func main() {
 	scheduleRepo := repository.NewScheduleRepository(conn)
 	teacherRepo := repository.NewTeacherRepository(conn)
 	subjectRepo := repository.NewSubjectRepository(conn)
+	groupRepo := repository.NewGroupRepository(conn)
 
 	// Initialize services
+	groupService := service.NewGroupService(groupRepo)
 	authService := service.NewAuthService(userRepo)
 	userService := service.NewUserService(userRepo)
-	studentService := service.NewStudentService(studentRepo, userRepo, attendanceRepo)
+	studentService := service.NewStudentService(studentRepo, userRepo, attendanceRepo, userRepo)
 	teacherService := service.NewTeacherService(*teacherRepo, *userRepo, *scheduleRepo)
 	scheduleService := service.NewScheduleService(scheduleRepo)
 	attendanceService := service.NewAttendanceService(attendanceRepo, studentRepo, subjectRepo)
 
 	// Initialize handlers
+	GroupHandler := handler.NewGroupHandler(groupService)
 	authHandler := handler.NewAuthHandler(authService)
 	userHandler := handler.NewUserHandler(userService)
 	studentHandler := handler.NewStudentHandler(studentService)
@@ -82,6 +97,7 @@ func main() {
 	studentRoutes := e.Group("/student", jmtMW)
 	studentRoutes.GET("/:id", studentHandler.GetStudentByID)
 	studentRoutes.GET("/:id/attendance", studentHandler.MyAttendance)
+	studentRoutes.GET("/all", studentHandler.GetAllStudents)
 	studentRoutes.POST("", studentHandler.CreateStudent)
 	studentRoutes.PATCH("/:id", studentHandler.UpdateStudent)
 
@@ -101,6 +117,10 @@ func main() {
 	attendanceRoutes.GET("/attendanceBySubjectID/:id", attendanceHandler.GetAttendanceBySubjectID)
 	attendanceRoutes.GET("/attendanceByStudentID/:id", attendanceHandler.GetAttendanceByStudentID)
 
+	// Group routes
+	groupRoutes := e.Group("/groups", jmtMW)
+	groupRoutes.GET("", GroupHandler.GetAllStudents)
+	groupRoutes.POST("", GroupHandler.CreateGroup)
 	// Admin routes
 
 	/*
